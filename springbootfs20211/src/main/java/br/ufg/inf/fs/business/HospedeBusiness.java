@@ -3,6 +3,9 @@ package br.ufg.inf.fs.business;
 import java.util.List;
 import java.util.Optional;
 
+import br.ufg.inf.fs.entities.Hotel;
+import br.ufg.inf.fs.exceptions.HospedeException;
+import br.ufg.inf.fs.exceptions.HotelException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,16 +22,27 @@ public class HospedeBusiness {
         return repository.findAll();
     }
 
-    public Hospede findById(Integer id) {
-        Optional<Hospede> retorno = repository.findById(id);
-        return retorno.get();
+    public List<Hospede> findName(String str){
+        return repository.findByNmHospede(str);
     }
 
-    public Hospede insert(Hospede hospede) {
+    public Hospede findById(Integer id) {
+        Optional<Hospede> retorno = repository.findById(id);
+        if(retorno.isPresent()){
+            return retorno.get();
+        }else{
+            return null;
+        }
+
+    }
+
+    public Hospede insert(Hospede hospede) throws HospedeException {
+        this.validaHospede(hospede);
         return repository.save(hospede);
     }
 
-    public Hospede update(Hospede hospede) {
+    public Hospede update(Hospede hospede) throws  HospedeException{
+        this.validaHospede(hospede);
         return repository.save(hospede);
     }
 
@@ -36,4 +50,12 @@ public class HospedeBusiness {
         repository.deleteById(id);
     }
 
+    private void validaHospede(Hospede hospede) throws HospedeException {
+        if(hospede.getNmHospede() == null || hospede.getNmHospede().length() == 0) {
+            throw new HospedeException("0308");
+        }
+        if(hospede.getCpf() == null) {
+            throw new HospedeException("0309");
+        }
+    }
 }

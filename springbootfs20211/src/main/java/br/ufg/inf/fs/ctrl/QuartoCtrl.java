@@ -1,8 +1,15 @@
 package br.ufg.inf.fs.ctrl;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import br.ufg.inf.fs.Messages;
+import br.ufg.inf.fs.entities.Hotel;
+import br.ufg.inf.fs.enums.CategoriaQuarto;
+import br.ufg.inf.fs.exceptions.HotelException;
+import br.ufg.inf.fs.exceptions.QuartoException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -26,32 +33,106 @@ public class QuartoCtrl {
 	
 	@GetMapping("/all")
 	public ResponseEntity<List<Quarto>> findAll(){
-		List<Quarto> list = business.findAll();
-		return ResponseEntity.ok().body(list);
+		HttpHeaders headers = new HttpHeaders();
+		HttpStatus status = HttpStatus.OK;
+		List<Quarto> list = new ArrayList<Quarto>();
+		try{
+			list = business.findAll();
+			if(list.size() == 0){
+				headers.add("message", Messages.get("0207"));
+			}
+		}catch (Exception e){
+			status = HttpStatus.BAD_REQUEST;
+			headers.add("message", Messages.get("0002"));
+		}
+		return new ResponseEntity<List<Quarto>>(list, headers, status);
 	}
-	
+
+	@GetMapping("/{category}")
+	public ResponseEntity<List<Quarto>> findByCategory(@PathVariable Integer category){
+		HttpHeaders headers = new HttpHeaders();
+		HttpStatus status = HttpStatus.OK;
+		List<Quarto> list = new ArrayList<Quarto>();
+		try{
+			list = business.findByCategoryQuarto(category);
+			if(list.size() == 0){
+				headers.add("message", Messages.get("0207"));
+			}
+		}catch (Exception e){
+			status = HttpStatus.BAD_REQUEST;
+			headers.add("message", Messages.get("0002"));
+		}
+		return new ResponseEntity<List<Quarto>>(list, headers, status);
+	}
+
 	@GetMapping("/{id}/details")
 	public ResponseEntity<Quarto> findById(@PathVariable Integer id){
-		Quarto retorno = business.findById(id);
-		return ResponseEntity.ok(retorno);
+		Quarto retorno = new Quarto();
+		HttpHeaders headers = new HttpHeaders();
+		HttpStatus status = HttpStatus.OK;
+
+		try{
+			retorno = business.findById(id);
+			if(retorno == null){
+				headers.add("message", Messages.get("0207"));
+			}
+		}catch (Exception e){
+			status = HttpStatus.BAD_REQUEST;
+			headers.add("message", Messages.get("0002"));
+		}
+		return new ResponseEntity<Quarto>(retorno, headers, status);
 	}
 	
 	@PostMapping("/insert")
 	public ResponseEntity<Quarto> insert(@RequestBody Quarto quarto){
-		quarto = business.insert(quarto);
-		return ResponseEntity.ok(quarto);
+		HttpHeaders headers = new HttpHeaders();
+		HttpStatus status = HttpStatus.CREATED;
+
+		try{
+			quarto = business.insert(quarto);
+			headers.add("message", Messages.get("0201"));
+		}catch (QuartoException e){
+			headers.add("message", Messages.get(e.getMessage()));
+			status = HttpStatus.BAD_REQUEST;
+		}catch (Exception e){
+			headers.add("message", Messages.get("0202"));
+			status = HttpStatus.INTERNAL_SERVER_ERROR;
+		}
+		return new ResponseEntity<Quarto>(quarto, headers, status);
 	}
 	
 	@PutMapping("/update")
 	public ResponseEntity<Quarto> update(@RequestBody Quarto quarto){
-		quarto = business.update(quarto);
-		return ResponseEntity.ok(quarto);
+		HttpHeaders headers = new HttpHeaders();
+		HttpStatus status = HttpStatus.OK;
+
+		try{
+			quarto = business.update(quarto);
+			headers.add("message", Messages.get("0203"));
+		}catch (QuartoException e){
+			headers.add("message", Messages.get(e.getMessage()));
+			status = HttpStatus.BAD_REQUEST;
+		}catch (Exception e){
+			headers.add("message", Messages.get("0204"));
+			status = HttpStatus.INTERNAL_SERVER_ERROR;
+		}
+		return new ResponseEntity<Quarto>(quarto, headers, status);
 	}
 	
 	@DeleteMapping("/{id}/delete")
 	public ResponseEntity<Void> delete(@PathVariable Integer id){
-		business.delete(id);
-		return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+		HttpHeaders headers = new HttpHeaders();
+		HttpStatus status = HttpStatus.NO_CONTENT;
+
+
+		try{
+			business.delete(id);
+			headers.add("message", Messages.get("0205"));
+		}catch (Exception e){
+			headers.add("message", Messages.get("0206"));
+			status = HttpStatus.INTERNAL_SERVER_ERROR;
+		}
+		return new ResponseEntity<Void>(headers, status);
 	}
 	
 }
