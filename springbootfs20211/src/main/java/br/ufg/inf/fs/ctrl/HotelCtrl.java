@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,7 +28,8 @@ public class HotelCtrl {
 
 	@Autowired
 	private HotelBusiness business;
-	
+
+	@PreAuthorize("hasRole('ADMIN')")
 	@GetMapping("/all")
 	public ResponseEntity<List<Hotel>> findAll(){
 		HttpHeaders headers = new HttpHeaders();
@@ -45,6 +47,8 @@ public class HotelCtrl {
 		return new ResponseEntity<List<Hotel>>(list, headers, status);
 	}
 
+
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 	@GetMapping("/{name}")
 	public ResponseEntity<List<Hotel>> findByName(@PathVariable String name){
 		HttpHeaders headers = new HttpHeaders();
@@ -62,6 +66,7 @@ public class HotelCtrl {
 		return new ResponseEntity<List<Hotel>>(list, headers, status);
 	}
 
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 	@GetMapping("/estrelas/{qtd}")
 	public ResponseEntity<List<Hotel>> findQtdEstrelas(@PathVariable Integer qtd){
 		HttpHeaders headers = new HttpHeaders();
@@ -81,6 +86,7 @@ public class HotelCtrl {
 
 	}
 
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 	@GetMapping("/{id}/details")
 	public ResponseEntity<Hotel> findById(@PathVariable Integer id){
 		Hotel retorno = new Hotel();
@@ -98,7 +104,8 @@ public class HotelCtrl {
 		}
 		return new ResponseEntity<Hotel>(retorno, headers, status);
 	}
-	
+
+	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping("/insert")
 	public ResponseEntity<Hotel> insert(@RequestBody Hotel hotel){
 		HttpHeaders headers = new HttpHeaders();
@@ -116,7 +123,8 @@ public class HotelCtrl {
 		}
 		return new ResponseEntity<Hotel>(hotel, headers, status);
 	}
-	
+
+	@PreAuthorize("hasRole('ADMIN')")
 	@PutMapping("/update")
 	public ResponseEntity<Hotel> update(@RequestBody Hotel hotel){
 		HttpHeaders headers = new HttpHeaders();
@@ -135,7 +143,8 @@ public class HotelCtrl {
 
 		return new ResponseEntity<Hotel>(hotel, headers, status);
 	}
-	
+
+	@PreAuthorize("hasRole('ADMIN')")
 	@DeleteMapping("/{id}/delete")
 	public ResponseEntity<Void> delete(@PathVariable Integer id){
 		HttpHeaders headers = new HttpHeaders();

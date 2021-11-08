@@ -1,19 +1,18 @@
 package br.ufg.inf.fs;
 
-import br.ufg.inf.fs.entities.Hospedagem;
-import br.ufg.inf.fs.entities.Hospede;
-import br.ufg.inf.fs.repositories.HospedagemRepository;
-import br.ufg.inf.fs.repositories.HospedeRepository;
+import br.ufg.inf.fs.entities.*;
+import br.ufg.inf.fs.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
-import br.ufg.inf.fs.entities.Hotel;
-import br.ufg.inf.fs.entities.Quarto;
 import br.ufg.inf.fs.enums.CategoriaQuarto;
-import br.ufg.inf.fs.repositories.HotelRepository;
-import br.ufg.inf.fs.repositories.QuartoRepository;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Configuration
 @Profile("dev")
@@ -30,7 +29,13 @@ public class Config  implements CommandLineRunner{
 
 	@Autowired
 	private HospedagemRepository hospedagemRepository;
-	
+
+	@Autowired
+	private UsuarioRepository usuarioRepository;
+
+	@Autowired
+	private RegraRepository regraRepository;
+
 	@Override
 	public void run(String... args) throws Exception {
 		// TODO Auto-generated method stub
@@ -58,6 +63,32 @@ public class Config  implements CommandLineRunner{
 		Hospedagem hpd1 = hospedagemRepository.save(new Hospedagem(null, q1, hp1, "2012-01-01", null));
 		Hospedagem hpd2 = hospedagemRepository.save(new Hospedagem(null, q2, hp2, "2013-01-01", null));
 		Hospedagem hpd3 = hospedagemRepository.save(new Hospedagem(null, q2, hp3, "2014-01-01", null));
+
+
+		Regra r1 = regraRepository.save(new Regra("ADMIN"));
+		Regra r2 = regraRepository.save(new Regra("USER"));
+		Regra r3 = regraRepository.save(new Regra("GUEST"));
+
+
+
+
+		List<Regra> regras = new ArrayList<Regra>();
+
+		regras.add(r1);
+		regras.add(r2);
+
+		PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+		Usuario usu1 = usuarioRepository.save(new Usuario("luciano", "Luciano Fraga", encoder.encode("1111"), regras));
+
+
+
+
+		regras = new ArrayList<Regra>();
+
+		regras.add(r2);
+		regras.add(r3);
+
+		Usuario usu2 = usuarioRepository.save(new Usuario("usuario", "usuario 1", encoder.encode("2222"), regras));
 	}
 
 }

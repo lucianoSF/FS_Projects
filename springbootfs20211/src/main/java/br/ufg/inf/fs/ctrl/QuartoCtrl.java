@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,7 +31,8 @@ public class QuartoCtrl {
 
 	@Autowired
 	private QuartoBusiness business;
-	
+
+	@PreAuthorize("hasRole('ADMIN')")
 	@GetMapping("/all")
 	public ResponseEntity<List<Quarto>> findAll(){
 		HttpHeaders headers = new HttpHeaders();
@@ -48,6 +50,7 @@ public class QuartoCtrl {
 		return new ResponseEntity<List<Quarto>>(list, headers, status);
 	}
 
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 	@GetMapping("/{category}")
 	public ResponseEntity<List<Quarto>> findByCategory(@PathVariable Integer category){
 		HttpHeaders headers = new HttpHeaders();
@@ -65,6 +68,7 @@ public class QuartoCtrl {
 		return new ResponseEntity<List<Quarto>>(list, headers, status);
 	}
 
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 	@GetMapping("/{id}/details")
 	public ResponseEntity<Quarto> findById(@PathVariable Integer id){
 		Quarto retorno = new Quarto();
@@ -82,7 +86,8 @@ public class QuartoCtrl {
 		}
 		return new ResponseEntity<Quarto>(retorno, headers, status);
 	}
-	
+
+	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping("/insert")
 	public ResponseEntity<Quarto> insert(@RequestBody Quarto quarto){
 		HttpHeaders headers = new HttpHeaders();
@@ -100,7 +105,8 @@ public class QuartoCtrl {
 		}
 		return new ResponseEntity<Quarto>(quarto, headers, status);
 	}
-	
+
+	@PreAuthorize("hasRole('ADMIN')")
 	@PutMapping("/update")
 	public ResponseEntity<Quarto> update(@RequestBody Quarto quarto){
 		HttpHeaders headers = new HttpHeaders();
@@ -118,7 +124,8 @@ public class QuartoCtrl {
 		}
 		return new ResponseEntity<Quarto>(quarto, headers, status);
 	}
-	
+
+	@PreAuthorize("hasRole('ADMIN')")
 	@DeleteMapping("/{id}/delete")
 	public ResponseEntity<Void> delete(@PathVariable Integer id){
 		HttpHeaders headers = new HttpHeaders();

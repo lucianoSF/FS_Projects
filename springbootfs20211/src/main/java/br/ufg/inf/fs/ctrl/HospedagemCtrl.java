@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,6 +30,7 @@ public class HospedagemCtrl {
     @Autowired
     private HospedagemBusiness business;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/all")
     public ResponseEntity<List<Hospedagem>> findAll(){
         HttpHeaders headers = new HttpHeaders();
@@ -47,6 +49,7 @@ public class HospedagemCtrl {
         return new ResponseEntity<List<Hospedagem>>(list, headers, status);
     }
 
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @GetMapping("/{category}")
     public ResponseEntity<List<Hospedagem>> findByCategory(@PathVariable Integer category){
         HttpHeaders headers = new HttpHeaders();
@@ -64,6 +67,7 @@ public class HospedagemCtrl {
         return new ResponseEntity<List<Hospedagem>>(list, headers, status);
     }
 
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @GetMapping("/{id}/details")
     public ResponseEntity<Hospedagem> findById(@PathVariable Integer id){
         Hospedagem retorno = new Hospedagem();
@@ -82,6 +86,7 @@ public class HospedagemCtrl {
         return new ResponseEntity<Hospedagem>(retorno, headers, status);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/insert")
     public ResponseEntity<Hospedagem> insert(@RequestBody Hospedagem hospedagem){
         HttpHeaders headers = new HttpHeaders();
@@ -100,6 +105,7 @@ public class HospedagemCtrl {
         return new ResponseEntity<Hospedagem>(hospedagem, headers, status);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/update")
     public ResponseEntity<Hospedagem> update(@RequestBody Hospedagem hospedagem){
         HttpHeaders headers = new HttpHeaders();
@@ -118,6 +124,7 @@ public class HospedagemCtrl {
         return new ResponseEntity<Hospedagem>(hospedagem, headers, status);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}/delete")
     public ResponseEntity<Void> delete(@PathVariable Integer id){
         HttpHeaders headers = new HttpHeaders();
