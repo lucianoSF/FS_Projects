@@ -8,6 +8,8 @@ import br.ufg.inf.fs.entities.Quarto;
 import br.ufg.inf.fs.exceptions.HospedagemException;
 import br.ufg.inf.fs.exceptions.HospedeException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import br.ufg.inf.fs.entities.Hospedagem;
@@ -21,6 +23,10 @@ public class HospedagemBusiness {
 
     public List<Hospedagem> findAll(){
         return repository.findAll();
+    }
+
+    public Page<Hospedagem> paginator(Pageable pageable){
+        return repository.findAll(pageable);
     }
 
     public List<Hospedagem> findByCategoryHospedagem(Integer category) {

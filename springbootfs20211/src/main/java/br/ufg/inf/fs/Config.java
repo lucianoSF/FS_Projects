@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @Configuration
 @Profile("dev")
@@ -44,7 +45,20 @@ public class Config  implements CommandLineRunner{
 		 * INSERIR NO MEU BANCO DE DADOS INFORMAÇÕES INICIAIS...
 		 * */
 
-		
+		String[] tipoH = new String[]{"Hotel", "Pousada", "Resort", "Hostel", "Pensão"};
+		String[] nomeH = new String[]{"dos Pássados", "das Emas", "dos Imigrantes", "da Alegria", "da Cidade"};
+		String[] localH = new String[]{"Goiânia","Anápolis","Brasília","Trindade", "Senador Canedo"};
+
+		for(int i = 0; i <10; i++) {
+			hotelRepository.save(new Hotel(
+					null,
+					tipoH[new Random().nextInt(5)]+" "+nomeH[new Random().nextInt(5)],
+					localH[new Random().nextInt(5)],
+					new Random().nextInt(5)+1
+			));
+		}
+
+
 		Hotel h1 = hotelRepository.save(new Hotel(null, "Calderão Furado", "Beco Diagonal", 3));
 		Hotel h2 = hotelRepository.save(new Hotel(null, "Bates Hotel", "White Pine Bay", 2));
 		Hotel h3 = hotelRepository.save(new Hotel(null, "Hotel Overlook", "Colorado", 4));

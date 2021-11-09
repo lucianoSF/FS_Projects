@@ -6,6 +6,8 @@ import java.util.List;
 import br.ufg.inf.fs.Messages;
 import br.ufg.inf.fs.exceptions.HotelException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,6 +49,23 @@ public class HotelCtrl {
 		return new ResponseEntity<List<Hotel>>(list, headers, status);
 	}
 
+	@PreAuthorize("hasRole('ADMIN')")
+	@GetMapping("/paginator")
+	public ResponseEntity<Page<Hotel>> paginator(Pageable pageable){
+		HttpHeaders headers = new HttpHeaders();
+		HttpStatus status = HttpStatus.OK;
+		Page<Hotel> list = null;
+		try {
+			list = business.paginator(pageable);
+			if(list.getSize() == 0) {
+				headers.add("message", Messages.get("0107"));
+			}
+		}catch (Exception e) {
+			status = HttpStatus.BAD_REQUEST;
+			headers.add("message", Messages.get("0002"));
+		}
+		return new ResponseEntity<Page<Hotel>>(list, headers, status);
+	}
 
 	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 	@GetMapping("/{name}")

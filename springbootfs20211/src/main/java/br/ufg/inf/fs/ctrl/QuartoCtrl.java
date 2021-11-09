@@ -9,6 +9,8 @@ import br.ufg.inf.fs.enums.CategoriaQuarto;
 import br.ufg.inf.fs.exceptions.HotelException;
 import br.ufg.inf.fs.exceptions.QuartoException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,6 +50,24 @@ public class QuartoCtrl {
 			headers.add("message", Messages.get("0002"));
 		}
 		return new ResponseEntity<List<Quarto>>(list, headers, status);
+	}
+
+	@PreAuthorize("hasRole('ADMIN')")
+	@GetMapping("/paginator")
+	public ResponseEntity<Page<Quarto>> paginator(Pageable pageable){
+		HttpHeaders headers = new HttpHeaders();
+		HttpStatus status = HttpStatus.OK;
+		Page<Quarto> list = null;
+		try {
+			list = business.paginator(pageable);
+			if(list.getSize() == 0) {
+				headers.add("message", Messages.get("0207"));
+			}
+		}catch (Exception e) {
+			status = HttpStatus.BAD_REQUEST;
+			headers.add("message", Messages.get("0002"));
+		}
+		return new ResponseEntity<Page<Quarto>>(list, headers, status);
 	}
 
 	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")

@@ -7,6 +7,8 @@ import br.ufg.inf.fs.enums.CategoriaQuarto;
 import br.ufg.inf.fs.exceptions.HotelException;
 import br.ufg.inf.fs.exceptions.QuartoException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import br.ufg.inf.fs.entities.Hotel;
@@ -21,6 +23,10 @@ public class QuartoBusiness {
 	
 	public List<Quarto> findAll(){
 		return repository.findAll();		
+	}
+
+	public Page<Quarto> paginator(Pageable pageable){
+		return repository.findAll(pageable);
 	}
 
 	public List<Quarto> findByCategoryQuarto(Integer category) {

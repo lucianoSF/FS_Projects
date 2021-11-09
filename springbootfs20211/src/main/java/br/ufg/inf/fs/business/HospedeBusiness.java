@@ -7,6 +7,8 @@ import br.ufg.inf.fs.entities.Hotel;
 import br.ufg.inf.fs.exceptions.HospedeException;
 import br.ufg.inf.fs.exceptions.HotelException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import br.ufg.inf.fs.entities.Hospede;
@@ -20,6 +22,10 @@ public class HospedeBusiness {
 
     public List<Hospede> findAll(){
         return repository.findAll();
+    }
+
+    public Page<Hospede> paginator(Pageable pageable){
+        return repository.findAll(pageable);
     }
 
     public List<Hospede> findName(String str){
